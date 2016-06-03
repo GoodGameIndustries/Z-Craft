@@ -25,6 +25,7 @@ import com.ggi.zcraft.UI.Joystick;
 import com.ggi.zcraft.objects.Moveable;
 import com.ggi.zcraft.objects.Player;
 import com.ggi.zcraft.objects.Weapon;
+import com.ggi.zcraft.objects.Zombie;
 
 /**
  * @author Emmett
@@ -36,6 +37,10 @@ public class GameScreen implements Screen, InputProcessor{
 	
 	public Player player;
 	public Moveable gun;
+	public Zombie zomb;
+	public Zombie zomb1;
+	public Zombie zomb2;
+	public Zombie zomb3;
 	
 	 public PerspectiveCamera cam;
 	 public CameraInputController camController;
@@ -65,8 +70,15 @@ public class GameScreen implements Screen, InputProcessor{
 		
 		/**temporary player creation*/
 		player = new Player(z.assets.man);
-		player.speed=.07f;
 		player.weapon=new Weapon(z.assets.TwoHand,0);
+		zomb = new Zombie(z.assets.man);
+		zomb.target=player;
+		zomb1 = new Zombie(z.assets.man);
+		zomb1.target=player;
+		zomb2 = new Zombie(z.assets.man);
+		zomb2.target=player;
+		zomb3 = new Zombie(z.assets.man);
+		zomb3.target=player;
 		
 		
 		
@@ -81,7 +93,7 @@ public class GameScreen implements Screen, InputProcessor{
 		modelBatch = new ModelBatch();
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        //environment.add(new DirectionalLight().set(0.4f, 0.4f, 0.4f, -1f, -0.8f, -0.2f));
 
         cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.position.set(0f, 3f, 3f);
@@ -97,7 +109,18 @@ public class GameScreen implements Screen, InputProcessor{
         instances.add(player);
         player.weapon.move(0, 0, 0);
         instances.add(player.weapon);
+        zomb.move(4,0,0);
+        zomb1.move(-4,0,0);
+        zomb2.move(0,0,4);
+        zomb3.move(0,0,-4);
+        instances.add(zomb);
+        instances.add(zomb1);
+        instances.add(zomb2);
+        instances.add(zomb3);
         
+        Moveable ground = new Moveable(z.assets.ground);
+        ground.move(0, 0, 0);
+        instances.add(ground);
         
 		
 	}
@@ -110,8 +133,17 @@ public class GameScreen implements Screen, InputProcessor{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         
         
-        if(leftPointer>-1){player.moveToward(leftJoy.diff,camAngle);//player.moved=true;
-        }else{player.stand();}
+        if(leftPointer>-1){player.moveToward(leftJoy.diff,camAngle);player.moved=true;
+        }
+        if(rightPointer>-1){player.aim(rightJoy.diff,camAngle);player.aiming=true;
+        }
+        
+        player.animate();
+        
+        zomb.move();
+        zomb1.move();
+        zomb2.move();
+        zomb3.move();
         
         modelBatch.begin(cam);
         modelBatch.render(instances, environment);
@@ -127,6 +159,10 @@ public class GameScreen implements Screen, InputProcessor{
        
        player.controller.update(delta);
        player.weapon.controller.update(delta);
+       zomb.controller.update(delta);
+       zomb1.controller.update(delta);
+       zomb2.controller.update(delta);
+       zomb3.controller.update(delta);
        
 		cam.update();
 		
@@ -198,7 +234,7 @@ public class GameScreen implements Screen, InputProcessor{
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if(leftPointer==pointer){leftPointer=-1;leftJoy.reset();}
-		else if(rightPointer==pointer){rightPointer=-1;rightJoy.reset();}
+		else if(rightPointer==pointer){rightPointer=-1;rightJoy.reset();player.aiming=false;}
 		return true;
 	}
 
@@ -208,10 +244,10 @@ public class GameScreen implements Screen, InputProcessor{
 		
 		
 		if(pointer==leftPointer){
-			leftJoy.move((float)screenX, (float)screenY);
+			leftJoy.move((float)screenX, (float)screenY);//player.moved=true;
 		}
 		else if(pointer==rightPointer){
-			rightJoy.move((float)screenX, (float)screenY);
+			rightJoy.move((float)screenX, (float)screenY);//player.aiming=true;
 		}
 		else{
 			cam.rotateAround(player.position, new Vector3(0,1,0), -(screenX-initScreenX));

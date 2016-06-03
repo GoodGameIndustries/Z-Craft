@@ -33,19 +33,18 @@ public class Joystick {
 	}
 	
 	public void move(float touchX, float touchY){
-		touchX-=.0155*w;touchY-=.0155*w;
-		if(touchX<(pos.x*w)){touchX=(int) (pos.x*w);}
-		if(touchY<(pos.y*h)){touchY=(int) (pos.y*h);}
-		if(touchX>((pos.x+(bounds.width/1.5))*w)){touchX=(int) ((pos.x+(bounds.width/1.5))*w);}
-		if(touchY>((pos.y*h)+((bounds.height/1.5)*w))){touchY=(int) ((pos.y*h)+((bounds.height/1.5)*w));}
-		touchX=(int) (touchX-((topBounds.width/3)*w));
-		touchY=(int) (touchY-((topBounds.height/3)*w));
-		top.x =touchX/w;
-		top.y=touchY/h;
+		top.x=touchX-topBounds.width*w/2f;
+		top.y=touchY-topBounds.height*w/2f;
+		
+		top.x/=w;
+		top.y/=h;
 		
 		diff.x = top.x-pos.x;
 		diff.y = top.y-pos.y;
 		
+		if(diff.len()>.05f){diff.setLength(.05f);System.out.println("scale");}
+		top.x=diff.x+pos.x;
+		top.y=diff.y+pos.y;
 	}
 	
 	public void reset(){

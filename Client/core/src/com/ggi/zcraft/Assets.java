@@ -13,7 +13,7 @@ public class Assets {
 	
 	/**Models*/
 	public Model man;
-	public Model tile;
+	public Model ground;
 	public Model TwoHand;
 
 	private boolean loading = false;
@@ -31,7 +31,7 @@ public class Assets {
 		
 		assets = new AssetManager();
         assets.load("data/Man.g3db", Model.class);
-        assets.load("data/tile.g3db", Model.class);
+        assets.load("data/Ground.g3db", Model.class);
         assets.load("data/2hand.g3db", Model.class);
         assets.load("data/JoystickBackground.png", Texture.class);
         assets.load("data/JoystickKnob.png", Texture.class);
@@ -44,12 +44,14 @@ public class Assets {
 	
 	private void doneLoading() {
 		man = assets.get("data/Man.g3db", Model.class);
-        tile = assets.get("data/tile.g3db", Model.class);
+        ground = assets.get("data/Ground.g3db", Model.class);
         TwoHand = assets.get("data/2hand.g3db", Model.class);
 		joyBG=new TextureRegion(assets.get("data/JoystickBackground.png", Texture.class));
 		joyKnob=new TextureRegion(assets.get("data/JoystickKnob.png", Texture.class));
         loading = false;
         
 	}
+	
+	
 	
 }
